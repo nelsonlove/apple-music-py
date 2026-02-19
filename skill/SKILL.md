@@ -11,8 +11,7 @@ Use `clawtunes` to control Apple Music from the terminal. Search and play music,
 
 Setup
 
-- Install (Homebrew): `brew tap forketyfork/tap && brew install clawtunes`
-- Install (pip): `pip install clawtunes`
+- Install (Homebrew): `brew install forketyfork/tap/clawtunes`
 - macOS-only; requires Apple Music app.
 
 Play Music
