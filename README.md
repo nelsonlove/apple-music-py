@@ -19,12 +19,6 @@ Clawtunes lets you search and play music, control playback, manage playlists, an
 brew install forketyfork/tap/clawtunes
 ```
 
-### With pip
-
-```bash
-pip install clawtunes
-```
-
 ### With Nix
 
 ```bash
