@@ -7,12 +7,41 @@ from clawtunes_helpers.applescript import run_applescript
 from clawtunes_helpers.selection import is_non_interactive, select_item
 
 
-def search_songs(name: str, limit: int | None = None) -> list[tuple[str, str]]:
-    """Search for songs by name.
+def search_songs(
+    name: str, limit: int | None = None, artist: str | None = None
+) -> list[tuple[str, str]]:
+    """Search for songs by name, optionally filtering by artist.
 
     Returns list of (id, display_text) tuples.
     """
-    script = """
+    if artist:
+        where_clause = "every track whose name contains query and artist contains artistQuery"
+        script = """
+on run argv
+    set query to item 1 of argv
+    set limitValue to item 2 of argv as integer
+    set artistQuery to item 3 of argv
+    tell application "Music"
+        set matchingTracks to (""" + where_clause + """)
+        if limitValue > 0 then
+            if (count of matchingTracks) > limitValue then
+                set matchingTracks to items 1 thru limitValue of matchingTracks
+            end if
+        end if
+        set output to ""
+        repeat with t in matchingTracks
+            set trackId to id of t
+            set trackName to name of t
+            set trackArtist to artist of t
+            set trackAlbum to album of t
+            set output to output & trackId & "|" & trackName & "|" & trackArtist & "|" & trackAlbum & linefeed
+        end repeat
+        return output
+    end tell
+end run
+"""
+    else:
+        script = """
 on run argv
     set query to item 1 of argv
     set limitValue to item 2 of argv as integer
@@ -36,7 +65,10 @@ on run argv
 end run
 """
     limit_value = limit if limit is not None else 0
-    stdout, _, returncode = run_applescript(script, [name, str(limit_value)])
+    args = [name, str(limit_value)]
+    if artist:
+        args.append(artist)
+    stdout, _, returncode = run_applescript(script, args)
 
     if returncode != 0 or not stdout:
         return []
@@ -69,9 +101,9 @@ end run
     return returncode == 0
 
 
-def play_song(name: str) -> bool:
-    """Search for and play a song by name."""
-    songs = search_songs(name)
+def play_song(name: str, artist: str | None = None) -> bool:
+    """Search for and play a song by name, optionally filtering by artist."""
+    songs = search_songs(name, artist=artist)
 
     if not songs:
         click.echo(f"No songs found matching '{name}'")
@@ -613,13 +645,48 @@ end run
 
 
 def search_songs_in_playlist(
-    playlist_name: str, song_name: str, limit: int | None = None
+    playlist_name: str,
+    song_name: str,
+    limit: int | None = None,
+    artist: str | None = None,
 ) -> list[tuple[str, str]]:
-    """Search for songs within a specific playlist.
+    """Search for songs within a specific playlist, optionally filtering by artist.
 
     Returns list of (id, display_text) tuples.
     """
-    script = """
+    if artist:
+        where_clause = "every track of targetPlaylist whose name contains query and artist contains artistQuery"
+        script = """
+on run argv
+    set playlistName to item 1 of argv
+    set query to item 2 of argv
+    set limitValue to item 3 of argv as integer
+    set artistQuery to item 4 of argv
+    tell application "Music"
+        if not (exists playlist playlistName) then
+            return ""
+        end if
+        set targetPlaylist to playlist playlistName
+        set matchingTracks to (""" + where_clause + """)
+        if limitValue > 0 then
+            if (count of matchingTracks) > limitValue then
+                set matchingTracks to items 1 thru limitValue of matchingTracks
+            end if
+        end if
+        set output to ""
+        repeat with t in matchingTracks
+            set trackId to id of t
+            set trackName to name of t
+            set trackArtist to artist of t
+            set trackAlbum to album of t
+            set output to output & trackId & "|" & trackName & "|" & trackArtist & "|" & trackAlbum & linefeed
+        end repeat
+        return output
+    end tell
+end run
+"""
+    else:
+        script = """
 on run argv
     set playlistName to item 1 of argv
     set query to item 2 of argv
@@ -648,9 +715,10 @@ on run argv
 end run
 """
     limit_value = limit if limit is not None else 0
-    stdout, _, returncode = run_applescript(
-        script, [playlist_name, song_name, str(limit_value)]
-    )
+    args = [playlist_name, song_name, str(limit_value)]
+    if artist:
+        args.append(artist)
+    stdout, _, returncode = run_applescript(script, args)
 
     if returncode != 0 or not stdout:
         return []
@@ -668,9 +736,11 @@ end run
     return results
 
 
-def add_song_to_playlist_interactive(playlist_name: str, song_query: str) -> bool:
+def add_song_to_playlist_interactive(
+    playlist_name: str, song_query: str, artist: str | None = None
+) -> bool:
     """Search for a song and add it to a playlist with user selection."""
-    songs = search_songs(song_query)
+    songs = search_songs(song_query, artist=artist)
 
     if not songs:
         click.echo(f"No songs found matching '{song_query}'")
@@ -698,9 +768,11 @@ def add_song_to_playlist_interactive(playlist_name: str, song_query: str) -> boo
         return False
 
 
-def remove_song_from_playlist_interactive(playlist_name: str, song_query: str) -> bool:
+def remove_song_from_playlist_interactive(
+    playlist_name: str, song_query: str, artist: str | None = None
+) -> bool:
     """Search for a song in a playlist and remove it with user selection."""
-    songs = search_songs_in_playlist(playlist_name, song_query)
+    songs = search_songs_in_playlist(playlist_name, song_query, artist=artist)
 
     if not songs:
         click.echo(

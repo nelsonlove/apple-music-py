@@ -198,3 +198,59 @@ def test_search_songs_in_playlist(monkeypatch):
         ("1", "Song A - Artist A (Album A)"),
         ("2", "Song B - Artist B (Album B)"),
     ]
+
+
+def test_search_songs_with_artist_filter(monkeypatch):
+    captured = {}
+
+    def fake_run_applescript(script, args=None):
+        captured["script"] = script
+        captured["args"] = args
+        stdout = "1|Chariot|Page France|Hello, Dear Wind\n"
+        return stdout, "", 0
+
+    monkeypatch.setattr(playback, "run_applescript", fake_run_applescript)
+
+    results = playback.search_songs("Chariot", limit=5, artist="Page France")
+
+    assert "on run argv" in captured["script"]
+    assert "artist contains artistQuery" in captured["script"]
+    assert captured["args"] == ["Chariot", "5", "Page France"]
+    assert results == [("1", "Chariot - Page France (Hello, Dear Wind)")]
+
+
+def test_search_songs_without_artist_uses_name_only(monkeypatch):
+    captured = {}
+
+    def fake_run_applescript(script, args=None):
+        captured["script"] = script
+        captured["args"] = args
+        stdout = "1|Chariot|Page France|Hello, Dear Wind\n"
+        return stdout, "", 0
+
+    monkeypatch.setattr(playback, "run_applescript", fake_run_applescript)
+
+    results = playback.search_songs("Chariot", limit=5)
+
+    assert "artist contains artistQuery" not in captured["script"]
+    assert captured["args"] == ["Chariot", "5"]
+
+
+def test_search_songs_in_playlist_with_artist_filter(monkeypatch):
+    captured = {}
+
+    def fake_run_applescript(script, args=None):
+        captured["script"] = script
+        captured["args"] = args
+        stdout = "1|Made|Greg Weeks|Awake Like Sleep\n"
+        return stdout, "", 0
+
+    monkeypatch.setattr(playback, "run_applescript", fake_run_applescript)
+
+    results = playback.search_songs_in_playlist(
+        "My Playlist", "Made", limit=5, artist="Greg Weeks"
+    )
+
+    assert "artist contains artistQuery" in captured["script"]
+    assert captured["args"] == ["My Playlist", "Made", "5", "Greg Weeks"]
+    assert results == [("1", "Made - Greg Weeks (Awake Like Sleep)")]

@@ -38,9 +38,10 @@ def play():
 
 @play.command("song")
 @click.argument("name")
-def play_song(name: str):
+@click.option("--artist", "-A", default=None, help="Filter by artist name")
+def play_song(name: str, artist: str | None):
     """Play a song by name."""
-    if not playback.play_song(name):
+    if not playback.play_song(name, artist=artist):
         raise SystemExit(1)
 
 
@@ -238,12 +239,20 @@ def repeat(mode: str):
     "--playlists/--no-playlists", "-p", default=False, help="Search playlists"
 )
 @click.option("--limit", "-n", default=10, help="Max results per category")
-def search(query: str, songs: bool, albums: bool, playlists: bool, limit: int):
+@click.option("--artist", "-A", default=None, help="Filter songs by artist name")
+def search(
+    query: str,
+    songs: bool,
+    albums: bool,
+    playlists: bool,
+    limit: int,
+    artist: str | None,
+):
     """Search for songs, albums, or playlists."""
     found_any = False
 
     if songs:
-        results = playback.search_songs(query, limit)
+        results = playback.search_songs(query, limit, artist=artist)
         if results:
             found_any = True
             click.echo(f"Songs ({len(results)}):")
@@ -339,18 +348,22 @@ def playlist_create(name: str):
 @playlist.command("add")
 @click.argument("playlist_name")
 @click.argument("song")
-def playlist_add(playlist_name: str, song: str):
+@click.option("--artist", "-A", default=None, help="Filter by artist name")
+def playlist_add(playlist_name: str, song: str, artist: str | None):
     """Add a song to a playlist."""
-    if not playback.add_song_to_playlist_interactive(playlist_name, song):
+    if not playback.add_song_to_playlist_interactive(playlist_name, song, artist=artist):
         raise SystemExit(1)
 
 
 @playlist.command("remove")
 @click.argument("playlist_name")
 @click.argument("song")
-def playlist_remove(playlist_name: str, song: str):
+@click.option("--artist", "-A", default=None, help="Filter by artist name")
+def playlist_remove(playlist_name: str, song: str, artist: str | None):
     """Remove a song from a playlist."""
-    if not playback.remove_song_from_playlist_interactive(playlist_name, song):
+    if not playback.remove_song_from_playlist_interactive(
+        playlist_name, song, artist=artist
+    ):
         raise SystemExit(1)
 
 
