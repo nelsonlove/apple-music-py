@@ -1,6 +1,6 @@
-# clawtunes
+# apple-music-py
 
-CLI for controlling Apple Music, backed by the `apple_music` Python library.
+Python library and CLI for controlling Apple Music on macOS. Formerly "clawtunes".
 
 ## Architecture
 
@@ -19,7 +19,7 @@ plugin/
   claude-code/              # Claude Code plugin (calls CLI)
 ```
 
-Dependency direction: `plugin → CLI (clawtunes) → MusicClient (apple_music) → AppleScript`
+Dependency direction: `plugin → CLI (apple-music) → MusicClient (apple_music) → AppleScript`
 
 ## Python API
 
@@ -35,7 +35,7 @@ client.pause()                # error string | None
 
 ```bash
 uv run pytest              # run tests
-uv run clawtunes --help    # run CLI
+uv run apple-music --help  # run CLI
 just test                  # run tests via justfile
 just check                 # lint + type-check + test
 ```

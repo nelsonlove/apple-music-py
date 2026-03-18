@@ -1,11 +1,11 @@
 {
-  "name": "clawtunes",
+  "name": "apple-music",
   "version": "0.3.0",
-  "description": "Apple Music control and intelligent playlist curation via clawtunes CLI",
+  "description": "Apple Music control and intelligent playlist curation",
   "author": {
     "name": "Nelson Love"
   },
-  "repository": "https://github.com/nelsonlove/clawtunes",
+  "repository": "https://github.com/nelsonlove/apple-music-py",
   "license": "MIT",
-  "keywords": ["music", "apple-music", "playlists", "clawtunes"]
+  "keywords": ["music", "apple-music", "playlists"]
 }

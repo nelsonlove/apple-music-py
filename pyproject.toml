@@ -1,13 +1,13 @@
 [project]
-name = "clawtunes"
-version = "0.2.1"
-description = "A CLI app to control Apple Music"
+name = "apple-music-py"
+version = "0.3.0"
+description = "Python library and CLI for controlling Apple Music on macOS"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = ["click>=8.0"]
 
 [project.scripts]
-clawtunes = "clawtunes.cli:cli"
+apple-music = "clawtunes.cli:cli"
 
 [build-system]
 requires = ["hatchling"]
