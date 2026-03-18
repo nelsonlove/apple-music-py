@@ -469,9 +469,8 @@ def playlist_add(ctx, playlist_name: str, song: str, artist: str | None):
 @click.pass_context
 def playlist_remove(ctx, playlist_name: str, song: str, artist: str | None):
     """Remove a song from a playlist."""
-    from apple_music.playback import search_songs_in_playlist
-
-    songs = search_songs_in_playlist(playlist_name, song, artist=artist)
+    client = _client(ctx)
+    songs = client.search_songs_in_playlist(playlist_name, song, artist=artist)
 
     if not songs:
         click.echo(f"No songs found matching '{song}' in playlist '{playlist_name}'")

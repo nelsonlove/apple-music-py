@@ -26,28 +26,28 @@ lint: format-check lint-ruff type-check
 # Format code with black
 format:
     @echo "🎨 Formatting code with black..."
-    black src/clawtunes src/clawtunes_helpers tests
+    black src/clawtunes src/apple_music tests
 
 # Check code formatting without modifying
 format-check:
     @echo "🔍 Checking code formatting..."
-    black --check src/clawtunes src/clawtunes_helpers tests
+    black --check src/clawtunes src/apple_music tests
 
 # Lint with ruff
 lint-ruff:
     @echo "🔍 Linting with ruff..."
-    ruff check src/clawtunes src/clawtunes_helpers tests
+    ruff check src/clawtunes src/apple_music tests
 
 # Fix auto-fixable ruff issues
 fix:
     @echo "🔧 Fixing auto-fixable issues..."
-    ruff check --fix src/clawtunes src/clawtunes_helpers tests
-    black src/clawtunes src/clawtunes_helpers tests
+    ruff check --fix src/clawtunes src/apple_music tests
+    black src/clawtunes src/apple_music tests
 
 # Type check with mypy
 type-check:
     @echo "🔍 Type checking with mypy..."
-    mypy src/clawtunes src/clawtunes_helpers
+    mypy src/clawtunes src/apple_music
 
 # Run all tests with pytest
 test:
@@ -57,7 +57,7 @@ test:
 # Run tests with coverage report
 test-cov:
     @echo "🧪 Running tests with coverage..."
-    pytest --cov=clawtunes --cov=clawtunes_helpers --cov-report=term-missing --cov-report=html
+    pytest --cov=clawtunes --cov=apple_music --cov-report=term-missing --cov-report=html
 
 # Run specific test file
 test-file FILE:

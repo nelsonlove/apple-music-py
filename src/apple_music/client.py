@@ -67,6 +67,18 @@ class MusicClient:
         """Search playlists. Returns list of (playlist_name, display_text)."""
         return playback.search_playlists(name, limit=limit)
 
+    def search_songs_in_playlist(
+        self,
+        playlist_name: str,
+        song_name: str,
+        limit: int | None = None,
+        artist: str | None = None,
+    ) -> list[tuple[str, str]]:
+        """Search songs within a playlist. Returns list of (id, display_text)."""
+        return playback.search_songs_in_playlist(
+            playlist_name, song_name, limit=limit, artist=artist,
+        )
+
     # ── Play ─────────────────────────────────────────────────────────
 
     def play_track(self, track_id: str) -> bool:
