@@ -34,9 +34,10 @@ client.pause()                # error string | None
 ## Development
 
 ```bash
-pip install -e ".[dev]"
-just test
-just check
+uv run pytest              # run tests
+uv run clawtunes --help    # run CLI
+just test                  # run tests via justfile
+just check                 # lint + type-check + test
 ```
 
 ## Key constraints
