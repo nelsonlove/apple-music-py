@@ -7,40 +7,47 @@ description: Use when the user asks to create a playlist, curate music, find son
 
 ## Overview
 
-Help the user create intelligently curated playlists from their Apple Music library using the `apple-music` CLI and your music knowledge.
+Help the user create intelligently curated playlists from their Apple Music library using the `apple-music` CLI (via the plugin launcher) and your music knowledge.
+
+**CLI invocation**: Always use the plugin launcher instead of calling `apple-music` directly:
+```bash
+${CLAUDE_PLUGIN_ROOT}/bin/run apple-music --json <command>
+```
 
 ## Core Workflow
 
-1. **Extract** — Pull track metadata from the user's library (playlists, loved tracks, etc.) via `apple-music` or `osascript`
+1. **Extract** — Pull track metadata from the user's library (playlists, loved tracks, etc.) via the CLI launcher or `osascript`
 2. **Curate** — Use your deep knowledge of artists and catalogs to filter tracks by mood, energy, genre, or purpose
-3. **Build** — Add tracks to a new or existing playlist via `apple-music`
+3. **Build** — Add tracks to a new or existing playlist via the CLI launcher
 
 ## Tools Available
 
 ### apple-music CLI
 
+All commands below use the launcher shorthand `AM` for readability. In practice, replace `AM` with `${CLAUDE_PLUGIN_ROOT}/bin/run apple-music --json`.
+
 ```bash
 # Search songs (use -A to filter by artist — critical for disambiguation)
-apple-music search "track name" -A "artist name" -s --no-albums
+AM search "track name" -A "artist name" -s --no-albums
 
 # Add to playlist (use -1 for automation, -A for precision)
-apple-music -1 playlist add "Playlist Name" "track name" -A "artist"
+AM -1 playlist add "Playlist Name" "track name" -A "artist"
 
 # Remove from playlist
-apple-music -1 playlist remove "Playlist Name" "track name" -A "artist"
+AM -1 playlist remove "Playlist Name" "track name" -A "artist"
 
 # Create playlist
-apple-music playlist create "Playlist Name"
+AM playlist create "Playlist Name"
 
 # List playlists
-apple-music playlists
+AM playlists
 
 # Playback control
-apple-music play playlist "Playlist Name"
-apple-music shuffle on
-apple-music pause / resume / next / prev
-apple-music volume 30
-apple-music status
+AM play playlist "Playlist Name"
+AM shuffle on
+AM pause / resume / next / prev
+AM volume 30
+AM status
 ```
 
 ### osascript (for bulk operations and advanced queries)
@@ -74,7 +81,7 @@ end tell
 5. Build the playlist, then audit for wrong matches (especially cover bands and generic track names)
 
 ### Critical: Always use -A for disambiguation
-Generic track names like "Sunday", "Alice", "Made", "Chariot" WILL match wrong songs without the artist filter. Always use `-A "Artist Name"` with `apple-music -1 playlist add`.
+Generic track names like "Sunday", "Alice", "Made", "Chariot" WILL match wrong songs without the artist filter. Always use `-A "Artist Name"` with the `-1 playlist add` command.
 
 ### Genre as quality check
 After building a playlist, check genre distribution. Outlier genres (e.g., Techno in a naptime playlist) usually indicate wrong-artist matches from `-1` auto-select.
